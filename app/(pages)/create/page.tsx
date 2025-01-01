@@ -1,4 +1,5 @@
 "use client";
+import axios from "axios";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -48,13 +49,15 @@ const Create = () => {
       name: "",
       tables: 1,
       time: "",
+      email: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     const formattedDate = date ? format(date, "dd-MM-yyyy") : "invalid";
     const userData = { ...values, date: formattedDate };
     console.log(userData);
+    await axios.post("http://localhost:3000/api", userData);
   }
   return (
     <div className="border rounded-xl shadow-xl p-6">
