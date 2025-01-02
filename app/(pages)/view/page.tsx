@@ -1,4 +1,5 @@
 import DeleteButton from "@/components/DeleteButton";
+import { BASE_URL } from "@/constants/constants";
 import axios from "axios";
 
 interface CustomerType {
@@ -11,13 +12,15 @@ interface CustomerType {
 }
 
 const fetchCustomers = async () => {
-  const response = await axios.get("http://localhost:3000/api");
+  const response = await axios.get(`${BASE_URL}/api`);
   return response.data;
 };
 
 const page = async () => {
+  if (!BASE_URL) {
+    return null;
+  }
   const customerList = await fetchCustomers();
-  console.log(customerList);
   return (
     <div>
       <h1 className="text-xl font-bold text-center mb-4">Customer List</h1>

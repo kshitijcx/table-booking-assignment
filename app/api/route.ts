@@ -18,7 +18,6 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const userData: UserDataType = await req.json();
-  console.log(userData);
   const resp = await prisma.customer.create({
     data: userData,
   });
@@ -60,7 +59,6 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const data = await req.json();
-  console.log(data.id);
   const resp = await prisma.customer.delete({ where: { id: data.id } });
   return NextResponse.json(resp);
 }

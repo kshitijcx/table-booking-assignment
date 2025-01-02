@@ -30,8 +30,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { BASE_URL } from "@/constants/constants";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -45,6 +46,32 @@ const formSchema = z.object({
 const Create = () => {
   const [date, setDate] = useState<Date>();
   const [done, setDone] = useState<boolean>(false);
+  const [availSlots, setAvailSlots] = useState([
+    { slot1: false },
+    { slot2: false },
+    { slot3: false },
+  ]);
+
+  useEffect(() => {
+    if (BASE_URL) {
+      const fetchAvailableSlots = async () => {
+        const formattedDate = date ? format(date, "dd-MM-yyyy") : "invalid";
+        const resp = await axios.get(
+          `${BASE_URL}/api/datetime/${formattedDate}`
+        );
+        if (resp) {
+          const timeSlotArr = [
+            { slot1: resp.data?.slot1 },
+            { slot2: resp.data?.slot2 },
+            { slot3: resp.data?.slot3 },
+          ];
+          setAvailSlots(timeSlotArr);
+        }
+      };
+      fetchAvailableSlots();
+    }
+  }, [date]);
+
   const [summary, setSummary] = useState<{
     id: string;
     date: string;
@@ -66,12 +93,15 @@ const Create = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formattedDate = date ? format(date, "dd-MM-yyyy") : "invalid";
     const userData = { ...values, date: formattedDate };
-    const resp = await axios.post("http://localhost:3000/api", userData);
-    console.log(resp);
+    const resp = await axios.post(`${BASE_URL}/api`, userData);
     if (resp) {
       setDone(true);
       setSummary(resp.data);
     }
+  }
+
+  if (!BASE_URL) {
+    return null;
   }
 
   if (done) {
@@ -174,28 +204,37 @@ const Create = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                name="slot"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Slots Available" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="10:00 am">10:00 am</SelectItem>
-                          <SelectItem value="12:00 pm">12:00 pm</SelectItem>
-                          <SelectItem value="2:00 pm">2:00 pm</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+              {date && (
+                <FormField
+                  name="slot"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Slots Available" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {!availSlots[0].slot1 && (
+                              <SelectItem value="10:00 am">10:00 am</SelectItem>
+                            )}
+                            {!availSlots[1].slot2 && (
+                              <SelectItem value="12:00 pm">12:00 pm</SelectItem>
+                            )}
+                            {!availSlots[2].slot3 && (
+                              <SelectItem value="2:00 pm">2:00 pm</SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <Button type="submit">Submit</Button>
             </form>
           </Form>
