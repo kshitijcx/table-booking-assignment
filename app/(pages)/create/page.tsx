@@ -32,7 +32,6 @@ import {
 } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { BASE_URL } from "@/constants/constants";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -53,11 +52,10 @@ const Create = () => {
   ]);
 
   useEffect(() => {
-    if (BASE_URL) {
       const fetchAvailableSlots = async () => {
         const formattedDate = date ? format(date, "dd-MM-yyyy") : "invalid";
         const resp = await axios.get(
-          `${BASE_URL}/api/datetime/${formattedDate}`
+          `/api/datetime/${formattedDate}`
         );
         if (resp) {
           const timeSlotArr = [
@@ -69,7 +67,6 @@ const Create = () => {
         }
       };
       fetchAvailableSlots();
-    }
   }, [date]);
 
   const [summary, setSummary] = useState<{
@@ -93,15 +90,11 @@ const Create = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formattedDate = date ? format(date, "dd-MM-yyyy") : "invalid";
     const userData = { ...values, date: formattedDate };
-    const resp = await axios.post(`${BASE_URL}/api`, userData);
+    const resp = await axios.post(`/api`, userData);
     if (resp) {
       setDone(true);
       setSummary(resp.data);
     }
-  }
-
-  if (!BASE_URL) {
-    return null;
   }
 
   if (done) {

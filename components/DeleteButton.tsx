@@ -8,7 +8,7 @@ import { BASE_URL } from "@/constants/constants";
 const DeleteButton = ({ id }: { id: string }) => {
   const router = useRouter();
   const deleteFxn = async (id: string) => {
-    await axios.delete(`${BASE_URL}/api`, { data: { id } });
+    await axios.delete(`/api`, { data: { id } });
     router.refresh();
   };
   if (!BASE_URL) {
