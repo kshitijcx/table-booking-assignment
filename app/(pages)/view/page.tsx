@@ -2,6 +2,8 @@ import DeleteButton from "@/components/DeleteButton";
 import { BASE_URL } from "@/constants/constants";
 import axios from "axios";
 
+export const revalidate = 0;
+
 interface CustomerType {
   id: string;
   name: string;
