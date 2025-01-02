@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`antialiased ${inter.className} h-screen flex items-center justify-center`}>{children}</body>
+      <body className={`antialiased ${inter.className} py-5`}>{children}</body>
     </html>
   );
 }
