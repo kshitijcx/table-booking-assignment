@@ -23,7 +23,9 @@ model Customer {
 }
 
 model DateTimeSlot {
-  id   String   @id @default(auto()) @map("_id") @db.ObjectId
-  date String
-  slot String[]
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  date  String @unique
+  slot1 Boolean @default(false)
+  slot2 Boolean @default(false)
+  slot3 Boolean @default(false)
 }
